@@ -2,7 +2,7 @@
 using FluentValidation;
 
 namespace Domain.Validators;
-public class QuoteValidator : AbstractValidator<Quote>
+public class QuoteValidator : AbstractValidator<QuoteModel>
 {
     public QuoteValidator()
     {
