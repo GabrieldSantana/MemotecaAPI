@@ -1,15 +1,15 @@
 ﻿namespace Domain.Dtos;
-public class PensamentoDTO
+public class QuoteDTO
 {
-    public string Quote { get; set; }
+    public string Pensamento { get; set; }
     public string Autor { get; set; }
     public int Modelo { get; set; }
 }
 
-public class UpdatePensamentoDTO
+public class UpdateQuoteDTO
 {
     public int Id { get; set; }
-    public string Quote { get; set; }
+    public string Pensamento { get; set; }
     public string Autor { get; set; }
     public int Modelo { get; set; }
 }
