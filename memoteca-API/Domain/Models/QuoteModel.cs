@@ -1,7 +1,7 @@
 ﻿using System.Reflection.Metadata.Ecma335;
 
 namespace Domain.Models;
-public class Quote
+public class QuoteModel
 {
     public int Id { get; set; }
     public string Pensamento { get;set; }
