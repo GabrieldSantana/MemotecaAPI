@@ -49,6 +49,35 @@ public class QuoteRepository : IQuoteRepository
         catch (Exception ex) { throw; }
     }
 
+    public async Task<RetornoPaginado<QuoteModel>> BuscarQuotesPagina(int pagina, int qtdRegistros)
+    {
+        try
+        {
+            string sql = "SELECT * FROM QUOTES ORDER BY ID OFFSET @OFFSET ROW FETCH NEXT @QUANTIDADE ROWS ONLY";
+
+            var parametros = new
+            {
+                OFFSET = (pagina - 1) * qtdRegistros,
+                QUANTIDADE = qtdRegistros
+            };
+
+            var quotes = await _connection.QueryAsync<QuoteModel>(sql, parametros);
+
+            var totalQuotes = "SELECT COUNT(*) FROM ALUNOS";
+
+            var retornoTotalQuotes = await _connection.ExecuteScalarAsync<int>(totalQuotes);
+
+            return new RetornoPaginado<QuoteModel>()
+            {
+                Pagina = pagina,
+                QtdPagina = qtdRegistros,
+                TotalRegistros = retornoTotalQuotes,
+                Registros = quotes.ToList(),
+            };
+        }
+        catch { throw; }
+    }
+
     public async Task<List<QuoteModel>> BuscarTodosQuotes()
     {
         try

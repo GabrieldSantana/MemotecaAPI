@@ -105,6 +105,14 @@ public class QuoteService : IQuoteService
         }
         catch { throw; }
     }
+    public Task<RetornoPaginado<QuoteModel>> RetornoPaginadoQuotesAsync(int pagina, int quantidade)
+    {
+        try
+        {
+            return _repository.BuscarQuotesPagina(pagina, quantidade);
+        }
+        catch (Exception ex) { throw; }
+    }
 
     private static void Validacao<TValidator>(QuoteModel entity) where TValidator : AbstractValidator<QuoteModel>
     {
