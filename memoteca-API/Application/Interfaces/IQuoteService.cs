@@ -13,6 +13,7 @@ public interface IQuoteService
         where TOutputModel : class
         where TValidator : AbstractValidator<QuoteModel>;
     Task<List<QuoteModel>> ListarQuotesAsync();
+    Task<RetornoPaginado<QuoteModel>> RetornoPaginadoQuotesAsync(int pagina, int quantidade);
     Task<QuoteModel> RetornarQuoteAsync(int id);
     Task<bool> RemoverQuoteAsync(int id);
 }
