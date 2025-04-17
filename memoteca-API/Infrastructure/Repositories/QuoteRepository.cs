@@ -2,7 +2,6 @@
 using Dapper;
 using Domain.Models;
 using Infrastructure.Interfaces;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure.Repositories;
 public class QuoteRepository : IQuoteRepository
@@ -40,9 +39,9 @@ public class QuoteRepository : IQuoteRepository
     {
         try
         {
-            var sql = $"SELECT TOP 1 * FROM QUOTES WHERE ID = {id}";
+            var sql = "SELECT * FROM QUOTES WHERE ID = @Id";
 
-            var quote = await _connection.QueryFirstOrDefaultAsync<QuoteModel>(sql);
+            var quote = await _connection.QuerySingleOrDefaultAsync<QuoteModel>(sql, new { Id = id });
 
             return quote;
         }
@@ -63,7 +62,7 @@ public class QuoteRepository : IQuoteRepository
 
             var quotes = await _connection.QueryAsync<QuoteModel>(sql, parametros);
 
-            var totalQuotes = "SELECT COUNT(*) FROM ALUNOS";
+            var totalQuotes = "SELECT COUNT(*) FROM QUOTES";
 
             var retornoTotalQuotes = await _connection.ExecuteScalarAsync<int>(totalQuotes);
 
@@ -87,7 +86,7 @@ public class QuoteRepository : IQuoteRepository
 
             return quotes.ToList();
         }
-        catch (Exception ex) { throw; }
+        catch { throw; }
     }
 
     public async Task<bool> ExcluirQuote(int id)
