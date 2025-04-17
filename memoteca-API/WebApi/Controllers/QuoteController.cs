@@ -93,7 +93,7 @@ public class QuoteController : ControllerBase
         try
         {
             var quote = await _service.RemoverQuoteAsync(id);
-            return Ok($"Quote {id} removido com sucesso!");
+            return Ok($"Pensamento {id} removido com sucesso!");
         }
         catch (Exception ex)
         {
