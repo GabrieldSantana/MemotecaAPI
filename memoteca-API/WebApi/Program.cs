@@ -13,12 +13,14 @@ builder.Services.AddAutoMapper(typeof(Program));
 
 string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-builder.Services.AddScoped<IDbConnection>(provider => // Provedor abrindo a conexão
+builder.Services.AddScoped(provider =>
 {
-    // Estância do banco
-    SqlConnection connection = new SqlConnection(connectionString);
-    connection.Open();
-    return connection; // Retornando a conexão criada
+    return new Func<IDbConnection>(() =>
+    {
+        var connection = new SqlConnection(connectionString);
+        connection.Open();
+        return connection;
+    });
 });
 
 #region Services
@@ -29,34 +31,44 @@ builder.Services.AddScoped<IQuoteService, QuoteService>();
 builder.Services.AddScoped<IQuoteRepository, QuoteRepository>();
 #endregion
 
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Configuração do CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularApp", builder =>
+    {
+        builder.WithOrigins("http://localhost:4200")
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Adiciona middleware de tratamento de erros
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        context.Response.StatusCode = 500;
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsync("{\"error\": \"Ocorreu um erro interno no servidor.\"}");
+    });
+});
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy("AllowAll",
-//    policy => {
-//        policy.AllowAnyOrigin()
-//              .AllowAnyMethod()
-//              .AllowAnyHeader();
-//    });
-//});
+app.UseCors("AllowAngularApp");
 
-//app.UseCors("AllowAll");
-
-app.UseHttpsRedirection();
+// Comente temporariamente para evitar problemas com HTTPS
+// app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

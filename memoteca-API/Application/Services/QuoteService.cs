@@ -61,7 +61,16 @@ public class QuoteService : IQuoteService
                 return outPutModel;
             }
         }
-        catch { throw; }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Erro em InserirQuoteAsync: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            if (ex.InnerException != null)
+            {
+                Console.WriteLine("Inner Exception: " + ex.InnerException.Message);
+            }
+            throw;
+        }
     }
 
     public Task<List<QuoteModel>> ListarQuotesAsync()
@@ -70,7 +79,7 @@ public class QuoteService : IQuoteService
         {
             var quotes = _repository.BuscarTodosQuotes();
 
-            if (quotes != null)
+            if (quotes == null)
                 throw new Exception("Ainda não há pensamentos!");
             else 
                 return quotes;
